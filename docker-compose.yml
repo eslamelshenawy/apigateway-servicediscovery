@@ -1,0 +1,36 @@
+version: '3'
+services:
+  service-discovery:
+    build: ./service-discovery
+    ports:
+      - 8761:8761
+
+  api-gateway:
+    build: ./api-gateway
+    environment:
+      - eureka.client.service-url.defaultZone=http://service-discovery:8761/eureka
+    restart: on-failure
+    depends_on:
+      - service-discovery
+    ports:
+      - 8080:8080
+
+  service1:
+    build: ./service1
+    environment:
+      - eureka.client.service-url.defaultZone=http://service-discovery:8761/eureka
+    restart: on-failure
+    depends_on:
+      - service-discovery
+    ports:
+      - 9001:9001
+
+  service2:
+    build: ./service2
+    environment:
+      - eureka.client.service-url.defaultZone=http://service-discovery:8761/eureka
+    restart: on-failure
+    depends_on:
+      - service-discovery
+    ports:
+      - 9002:9002
